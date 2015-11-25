@@ -18,5 +18,10 @@ module HM
       @subscriptions.select { |s| s.match_channel?(given_channel) }
     end
 
+    def process_channel_payload(channel, payload)
+      matching_subscriptions(channel).each do |subscription|
+        subscription.block.call(channel, payload)
+      end
+    end
   end
 end

@@ -63,17 +63,35 @@ describe HM::Subscriber do
 
     before { subscriber.instance_variable_set(:@subscriptions, [subscription]) }
 
-    it 'should return matching subscriptions' do
+    it 'returns matching subscriptions' do
       expect( subscriber.matching_subscriptions('time/tick') ).to eql([subscription])
     end
 
     context 'when subscriptions do not match' do
       let(:match_channel) { false }
 
-      it 'should not return any subscriptions' do
+      it 'returns any subscriptions' do
         expect( subscriber.matching_subscriptions('time/tick') ).to be_empty
       end
     end
+  end
+
+  describe '#process_channel_payload' do
+    let(:channel)      { 'foo/bar' }
+    let(:payload)      { {'foo' => 'bar'} }
+    let(:block)        { double(:block) }
+    let(:subscription) { double(:block => block) }
+
+    before do
+      allow(subscriber).to receive(:matching_subscriptions)
+                            .and_return([subscription])
+    end
+
+    it 'calls the block for matching subscriptions' do
+      expect( block ).to receive(:call).with(channel, payload)
+    end
+
+    after { subscriber.process_channel_payload(channel, payload)}
   end
 
 end

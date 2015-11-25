@@ -2,8 +2,10 @@ lat: 52.0263009
 lng: 5.5544309
 components:
   lifx:
-    api_key:
-  monitor: true
+    api_key: abcdef
+
+  monitor:
+    active: true
 
   kaku:
     kaku1:
