@@ -34,7 +34,7 @@ module HM
       def subscribe(channel, id, callback=nil, &block)
         self.class.subscribe(hm, channel, id) do |channel, message|
           if callback
-            send(callback)
+            send(callback, channel, message)
           elsif block_given?
             block.call(channel, message)
           end
@@ -44,7 +44,7 @@ module HM
       def subscribe_once(channel, id, callback=nil, &block)
         self.class.subscribe_once(hm, channel, id) do |channel, message|
           if callback
-            send(callback)
+            send(callback, channel, message)
           elsif block_given?
             block.call(channel, message)
           end
@@ -54,7 +54,7 @@ module HM
       def subscribe_timestamp(timestamp, callback=nil, &block)
         self.class.subscribe_timestamp(hm, timestamp) do |channel, message|
           if callback
-            send(callback)
+            send(callback, channel, message)
           elsif block_given?
             block.call(channel, message)
           end
