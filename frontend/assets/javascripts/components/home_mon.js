@@ -4,7 +4,7 @@ class HomeMon extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {message: ''}
+    this.state = {messages: ''}
   }
 
   componentDidMount() {
@@ -19,7 +19,7 @@ class HomeMon extends React.Component {
     return (
       <div>
         <h1>Woot!</h1>
-        <p>{this.state.message}</p>
+        <p>{JSON.stringify(this.state.message)}</p>
       </div>
     );
   }

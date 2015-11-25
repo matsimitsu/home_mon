@@ -10,7 +10,7 @@ module HM
 
     def match_channel?(given_channel)
       # Return true if the channel matches the 'catch-all'
-      return true if given_channel == '#'
+      return true if channel == '#'
 
       # Return true if channel is an exact match
       return true if given_channel == channel

@@ -7,11 +7,12 @@ describe 'HM::Helpers::State' do
 
     def id; 'abc123'; end
   end
+
   let(:test_with_state_helper) { TestWithStateHelper.new }
 
   describe '#expose_state' do
     before do
-      test_with_state_helper.instance_variable_set(:@state, {'foo' => 'bar'})
+      allow(test_with_state_helper).to receive(:state).and_return({'foo' => 'bar'})
     end
 
     it 'returns the internal state' do
@@ -21,7 +22,7 @@ describe 'HM::Helpers::State' do
 
   describe '#change_state' do
     before do
-      test_with_state_helper.instance_variable_set(:@state, {'foo' => 'bar'})
+      allow(test_with_state_helper).to receive(:state).and_return({'foo' => 'bar'})
 
       # Make sure we don't publish stuff
       allow(test_with_state_helper).to receive(:publish)
@@ -66,16 +67,3 @@ describe 'HM::Helpers::State' do
     end
   end
 end
-
-#def change_state(new_state={})
-#  force     = new_state.delete(:force) || false
-#  old_state = @state
-#
-#  @state.merge(new_state)
-#
-#  changed = old_state == @state
-#
-#  if changed || force
-#    publish('event/state_changed', JSON.generate(expose_state.merge(:id => id)))
-#  end
-#end

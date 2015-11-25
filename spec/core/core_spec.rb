@@ -63,18 +63,6 @@ describe HM::Core do
     after { core.setup_components }
   end
 
-  describe '#require_helpers' do
-    it 'requires the files found in the helpers dir' do
-      path = File.join(root_path, '/helpers/**/*.rb')
-      expect( Dir ).to receive(:glob).with(path)
-                                     .and_return(['/path/to/helper.rb'])
-                                     .at_least(1)
-                                     .times
-    end
-
-    after { core.require_helpers }
-  end
-
   describe '#run' do
     let(:json)         { JSON.generate({'foo' => 'bar'}) }
     let(:topic)        { 'event/new' }

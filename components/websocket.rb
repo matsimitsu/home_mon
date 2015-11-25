@@ -1,17 +1,14 @@
 module Components
-  class Websocket
-    include HM::Helpers::Component
-    include HM::Helpers::Subscriber
-    include HM::Helpers::Publisher
+  class Websocket < Components::Base
+    set_callback :initialize, :after, :start_websocket
 
     def self.setup(hm)
-      new(hm).start_websocket
+      new(hm)
     end
 
     def start_websocket
-      WebSocket::EventMachine::Server.start(:host => "0.0.0.0", :port => 8081) do |ws|
-        subscribe('#', self.id) do |channel, message|
-          puts 'mooo'
+      subscribe('#', id) do |channel, message|
+        WebSocket::EventMachine::Server.start(:host => "0.0.0.0", :port => 8081) do |ws|
           ws.send(JSON.generate({:channel => channel, :message => message}))
         end
       end

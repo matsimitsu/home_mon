@@ -2,17 +2,26 @@ lat: 52.0263009
 lng: 5.5544309
 components:
   lifx:
-    api_key: abcdef
+    api_key: <%= ENV['LIFX_API_KEY'] %>
+    entities:
+      living:
+        name: 'Living room'
+        icon: 'i-lightbulb-o'
+        code: 'group:Living'
+      all:
+        name: 'All'
+        icon: 'i-lightbulb-o'
+        code: 'all'
 
   monitor:
     active: true
 
   kaku:
-    kaku1:
+    living:
       name: 'TV woonkamer'
       icon: 'desktop'
       code: 'M 16'
-    kaku2:
+    christmas:
       name: 'Kerstverlichting'
       icon: 'i-lightbulb-o'
       code: 'M 16'
@@ -21,5 +30,6 @@ components:
     group1:
       name: 'All'
       members:
-        - 'kaku1'
-        - 'kaku2'
+        - 'kaku/living'
+        - 'kaku/christmas'
+        - 'lifx/living'

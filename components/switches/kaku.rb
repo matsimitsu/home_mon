@@ -1,31 +1,25 @@
 module Components
   class Kaku < Components::Switch
-    attr_reader :code, :name, :icon
-
     def self.setup(hm)
       if hm.config['components']['kaku']
         hm.config['components']['kaku'].each do |id, att|
-          new(hm, id, att)
+          new(hm, att.merge('id' => id))
         end
       end
     end
 
-    def initialize(hm, id, att)
-      @id   = id
-      @name = att['name']
-      @code = att['code']
-      @icon = att['icon']
-      super(hm)
+    def id
+      state['id']
     end
 
     def switch_on
       #system "sudo 'kaku' #{code} on"
-      change_state 'on'
+      change_state({:power => 'on'})
     end
 
     def switch_off
       #system "sudo 'kaku' #{code} off"
-      change_state 'off'
+      change_state({:power => 'off'})
     end
 
   end

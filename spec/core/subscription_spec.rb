@@ -15,8 +15,12 @@ describe HM::Subscription do
   end
 
   describe 'match_channel?' do
-    it 'returns true if channel matches #' do
-      expect( subscription.match_channel?('#') ).to be_truthy
+    context 'when subscribed to all channels' do
+      let(:channel) { '#' }
+
+      it 'returns true if channel matches #' do
+        expect( subscription.match_channel?('foo/bar') ).to be_truthy
+      end
     end
 
     it 'returns true if channel matches the exact channel' do

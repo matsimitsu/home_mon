@@ -3,22 +3,22 @@ module HM
     module State
 
       def expose_state
-        @state
+        state
       end
 
       def change_state(new_state={})
         force     = new_state.delete(:force) || false
-        old_state = @state
+        old_state = state
 
-        @state.merge!(new_state)
+        state.merge!(new_state)
 
-        changed = old_state == @state
+        changed = old_state == state
 
         if changed || force
           publish('event/state_changed', expose_state.merge('id' => id))
         end
 
-        @state
+        state
       end
     end
   end

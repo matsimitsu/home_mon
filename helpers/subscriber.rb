@@ -34,7 +34,7 @@ module HM
       def subscribe(channel, id, callback=nil, &block)
         self.class.subscribe(hm, channel, id) do |channel, message|
           if callback
-            send(callback, channel, message)
+            call_callback(callback, channel, message)
           elsif block_given?
             block.call(channel, message)
           end
@@ -44,7 +44,7 @@ module HM
       def subscribe_once(channel, id, callback=nil, &block)
         self.class.subscribe_once(hm, channel, id) do |channel, message|
           if callback
-            send(callback, channel, message)
+            call_callback(callback, channel, message)
           elsif block_given?
             block.call(channel, message)
           end
@@ -54,10 +54,20 @@ module HM
       def subscribe_timestamp(timestamp, callback=nil, &block)
         self.class.subscribe_timestamp(hm, timestamp) do |channel, message|
           if callback
-            send(callback, channel, message)
+            call_callback(callback, channel, message)
           elsif block_given?
             block.call(channel, message)
           end
+        end
+      end
+
+      def call_callback(callback, channel, message)
+        arity = self.class.instance_method(callback.to_sym).arity
+        case arity
+        when 1 then send(callback, message)
+        when 2 then send(callback, channel, message)
+        else
+          send(callback)
         end
       end
     end

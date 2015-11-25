@@ -7,6 +7,7 @@ require 'securerandom'
 require 'yaml'
 require 'active_support/time'
 require 'active_support/concern'
+require 'active_support/callbacks'
 require 'json'
 require 'rest_client'
 require 'websocket-eventmachine-server'
@@ -24,7 +25,6 @@ module HM
       @config        = YAML.load_file(File.join(root, 'config', 'config.yml'))
       @components    = []
       @connection    = nil
-      require_helpers
     end
 
     # Convenience method that returns the component config
@@ -47,19 +47,21 @@ module HM
       end
     end
 
-    # Requires the helpers
-    def require_helpers
-      Dir.glob(File.join(root, 'helpers', '**', '*.rb'), &method(:require))
-    end
-
     # Runs the main loop
     def start
-      EventMachine::error_handler { |e| puts "#{e}: #{e.backtrace.first}" }
-
+      EventMachine.epoll
+      EventMachine::error_handler { |e| puts "#{e}: #{e.backtrace}" }
+      trap("TERM") { stop }
+      trap("INT")  { stop }
       # Run eventmachine loop
       EventMachine.run do
         run
       end
+    end
+
+    def stop
+      logger.info("Terminating")
+      EventMachine.stop
     end
 
     # Called from the eventmachine loop, here so we can test it :)
@@ -83,7 +85,7 @@ module HM
     # Decodes the given message and calls any subscribers that match the channel
     def process_message(message)
       channel = message.topic
-      payload = JSON.parse(message.payload)
+      payload = message.payload.present? ? JSON.parse(message.payload) : {}
 
       subscriber.process_channel_payload(channel, payload)
     end

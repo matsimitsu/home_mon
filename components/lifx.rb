@@ -1,50 +1,47 @@
 module Components
-  class Lifx
-    include HM::Helpers::Component
-    include HM::Helpers::Subscriber
-    include HM::Helpers::Publisher
+  class Lifx < Components::Base
+    set_callback :initialize, :after, :listen_for_changes
 
     def self.setup(hm)
-      if hm.config['components'] && hm.config['components']['lifx']
-        self.subscribe(hm, 'timer/trick', self.name) do |channel, message|
-          time = Time.parse(message)
-          self.update if time && time.min % 5 == 0
+      if hm.component_config('lifx')
+        hm.component_config('lifx')['entities'].each do |id, att|
+          new(hm, att.merge('id' => id))
         end
       end
-
-      self.update
     end
 
-    def self.update
-      puts "Updating LIFX config"
-    end
-
-    def log_tick(message)
-      logger.debug "MONITOR: #{message.inspect}"
+    def id
+      state['id']
     end
 
     def listen_for_changes
-      subscribe("switches/#{name}/off", name, :switch_off)
-      subscribe("switches/#{name}/on", name, :switch_on)
+      subscribe("components/#{name}/#{id}/off", name, :switch_off)
+      subscribe("components/#{name}/#{id}/on", name, :switch_on)
     end
 
-    def switch_on
-      switch('on')
+    def switch_on(given_params)
+      params = {
+        :power      => 'on',
+        :duration   => given_params[:duration] || 5,
+        :brightness => (given_params[:brightness] || 50).to_f / 100
+      }
+      switch(params)
+      change_state(params)
     end
 
     def switch_off
-      switch('off')
+      params = {:power  => 'off'}
+      switch(params)
+      change_state(params)
     end
 
-    def switch(state='on')
+    def switch(payload)
+      api_key = hm.component_config('lifx')['api_key']
       RestClient::Request.execute(
         :method  => :put,
-        :url     => "https://api.lifx.com/v1/lights/#{code}/state",
-        :payload => {
-          "power"    => state,
-          "duration" => 5
-        },
-        :headers => {'Authorization' => "Bearer #{ENV['LIFX_KEY']}"}
+        :url     => "https://api.lifx.com/v1/lights/#{state['code']}/state",
+        :payload => payload,
+        :headers => {'Authorization' => "Bearer #{api_key}"}
       )
     end
 

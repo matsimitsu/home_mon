@@ -1,44 +1,36 @@
 module Components
-  class Group
-    attr_reader :state
-    include HM::Helpers::Component
-    include HM::Helpers::Subscriber
-    include HM::Helpers::Publisher
+  class Group < Components::Base
+    set_callback :initialize, :after, :listen_for_changes
 
     def self.setup(hm)
-      if hm.config['components']['group']
-        hm.config['components']['group'].each do |id, att|
-          new(hm, id, att)
+      if hm.component_config('group')
+        hm.component_config('group').each do |id, att|
+          new(hm, att.merge('id' => id, 'power' => 'off'))
         end
       end
     end
 
-    def initialize(hm, id, att)
-      @id      = id
-      @name    = att['name']
-      @icon    = att['icon']
-      @members = att['members']
-      super(hm)
+    def id
+      state['id']
     end
 
-    def switch_on
-      @members.each do |member|
-        publish("switches/#{member}/on", nil)
+    def switch_on(params={})
+      state['members'].each do |member|
+        publish("components/#{member}/on", params)
       end
-      change_state 'on'
+      change_state :power => 'on'
     end
 
-    def switch_off
-      @members.each do |member|
-        publish("switches/#{member}/on", nil)
+    def switch_off(params={})
+      state['members'].each do |member|
+        publish("components/#{member}/off", params)
       end
-      change_state 'off'
+      change_state :power => 'off'
     end
-
 
     def listen_for_changes
-      subscribe("switches/#{id}/off", id, :switch_off)
-      subscribe("switches/#{id}/on", id, :switch_on)
+      subscribe("components/#{name}/#{id}/off", id, :switch_off)
+      subscribe("components/#{name}/#{id}/on", id, :switch_on)
     end
 
   end

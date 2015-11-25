@@ -1,4 +1,5 @@
 # HomeMon
+[![Circle CI](https://circleci.com/gh/matsimitsu/home_mon/tree/develop.svg?style=svg)](https://circleci.com/gh/matsimitsu/home_mon/tree/develop)
 
 An event-driven home monitoring/automatisation system based on [MQTT](http://mqtt.org)
 
@@ -29,7 +30,6 @@ It's inspired by [Home Assistant](http://home-assistant.io), but converted to my
 * Start Mosquitto   `bundle exec foreman start`
 * Run the server    `bundle exec ruby app.rb`
 * Runt the frontend `cd frontend && gulp`
-
 
 
 # Components
@@ -65,6 +65,21 @@ def self.update
   end
 end
 ```
+## Initializer
+The `Components::Base` class handles the initialisation, you can add your own by calling the `after_initialize` callback.
+
+``` ruby
+module Components
+  class Group < Components::Base
+    set_callback :initialize, :after, :listen_for_changes
+
+    def listen_for_changes
+      subscribe("components/#{name}/#{id}/off", id, :switch_off)
+      subscribe("components/#{name}/#{id}/on", id, :switch_on)
+    end
+  end
+end
+```
 
 ## State
 Each component instance should expose it's state with a `expose_state` method.
@@ -87,7 +102,7 @@ If you use the `update_state` method in a component, a new event will be publish
 
 ``` ruby
 def foo
-  set_state(:bar => true)
+  set_state('bar' => true)
 end
 ```
 
@@ -96,7 +111,7 @@ you can pass `:force => true`.
 
 ``` ruby
 def foo
-  set_state(:bar => true, :force => true)
+  set_state('bar' => true, 'force' => true)
 end
 
 ```
@@ -123,7 +138,7 @@ A component can publish events by calling `publish`
 
 ``` ruby
 def foo
-  publish('channel/specific', {:foo => 'bar'}))
+  publish('channel/specific', {'foo' => 'bar'}))
 end
 
 ```
@@ -133,10 +148,8 @@ An example of a component:
 
 ``` ruby
 module Components
-  class Logger
-    include HM::Helpers::Component
-    include HM::Helpers::Subscriber
-    include HM::Helpers::Publisher
+  class Logger < Components::Base
+    set_callback :initialize, :after, :start_monitor
 
     def self.setup(hm)
       new(hm).start_monitor if hm.component_config('logger')
