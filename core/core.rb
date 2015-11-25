@@ -58,21 +58,26 @@ module HM
 
       # Run eventmachine loop
       EventMachine.run do
-        @connection = EventMachine::MQTT::ClientConnection.connect('localhost')
-
-        # Subscribe to the 'all' channel and process each incoming message
-        @connection.subscribe('#')
-        @connection.receive_callback do |message|
-          process_message(message)
-        end
-
-        # After connection is present, load the components
-        # (some depend on connection beeing there)
-        setup_components
-
-        # Publish a start message, so components can start doing their thing
-        @connection.publish('core/start', nil)
+        run
       end
+    end
+
+    # Called from the eventmachine loop, here so we can test it :)
+    def run
+      @connection = EventMachine::MQTT::ClientConnection.connect('localhost')
+
+      # Subscribe to the 'all' channel and process each incoming message
+      @connection.subscribe('#')
+      @connection.receive_callback do |message|
+        process_message(message)
+      end
+
+      # After connection is present, load the components
+      # (some depend on connection beeing there)
+      setup_components
+
+      # Publish a start message, so components can start doing their thing
+      @connection.publish('core/start', {})
     end
 
     # Decodes the given message and calls any subscribers that match the channel

@@ -75,6 +75,55 @@ describe HM::Core do
     after { core.require_helpers }
   end
 
+  describe '#run' do
+    let(:json)         { JSON.generate({'foo' => 'bar'}) }
+    let(:topic)        { 'event/new' }
+    let(:message)      { double(:message, :topic => topic, :payload => json) }
+    let(:connection) do
+      double(:connection, :subscribe => true, :publish => true)
+    end
+
+    before do
+      # Stub MQTT connection
+      allow(EventMachine::MQTT::ClientConnection).to receive(:connect)
+                                                      .and_return(connection)
+
+      # Stub eventmachine MQTT callback
+      allow(connection).to receive(:receive_callback).and_yield(message)
+
+      # Stub setup_components
+      allow(core).to receive(:setup_components)
+    end
+
+    it 'connects to mqtt' do
+      expect(EventMachine::MQTT::ClientConnection).to receive(:connect)
+                                                        .with('localhost')
+                                                        .and_return(connection)
+    end
+
+    it 'connects subscribes to "#"' do
+      expect( connection ).to receive(:subscribe).with('#')
+    end
+
+    it 'listens for messages' do
+      expect( connection ).to receive(:receive_callback)
+    end
+
+    it 'processes received message' do
+      expect( core ).to receive(:process_message).with(message)
+    end
+
+    it 'sets up the components' do
+      expect( core ).to receive(:setup_components)
+    end
+
+    it 'lets other components know its done' do
+      expect( connection ).to receive(:publish).with('core/start', {})
+    end
+
+    after { core.run }
+  end
+
   describe '#process_message' do
     let(:json)         { JSON.generate({'foo' => 'bar'}) }
     let(:topic)        { 'event/new' }
