@@ -1,0 +1,23 @@
+lat: 52.0263009
+lng: 5.5544309
+components:
+  lifx:
+    api_key:
+  monitor: true
+
+  kaku:
+    kaku1:
+      name: 'TV woonkamer'
+      icon: 'desktop'
+      code: 'M 16'
+    kaku2:
+      name: 'Kerstverlichting'
+      icon: 'i-lightbulb-o'
+      code: 'M 16'
+
+  group:
+    group1:
+      name: 'All'
+      members:
+        - 'kaku1'
+        - 'kaku2'
