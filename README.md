@@ -44,14 +44,14 @@ It also exposes a state for it's fields.
 Once a component is loaded, `self.setup` is called with the `HomeMonitor instance`.
 In this setup phase you can generate zero or more instances of the component, based on configuration.
 
-The HomeMonitor instance exposes the config `hm.config`. You can get the component specific config (if available) with `hm.component_config(component_name)` where `component_name` is a downcased version of the name. (e.g. Components::Lifx becomes 'lifx')
+The HomeMonitor instance exposes the config `hm.config`. You can get the component specific config (if available) with `hm.component_config(component_name)` where `component_name` is a downcased version of the name. (e.g. Components::Lifx becomes 'lifx') and check if there is a config with `hm.component_config?(component_name)`
 
 In the setup you can also subscribe to certain events to update your component when needed. For example we want to update the LIFX lights every 5 minutes (to detect new lights for example).
 
 When creating a new instance, always pass the `HomeMonitor` instance.
 ``` ruby
 def self.setup(hm)
-  if hm.component_config('lifx') # Make sure we can activate this component
+  if hm.component_config?('lifx') # Make sure we can activate this component
     self.subscribe_periodically(hm, {:minutes => 5}, :update)
   end
 

@@ -21,7 +21,7 @@ module HM
           utc = time.utc
           id  = "timer-#{SecureRandom.hex(3)}"
           self.subscribe(hm, 'timer/tick', id) do |channel, message|
-            tick_time = Time.parse(message).utc
+            tick_time = Time.parse(message['time']).utc
             if tick_time >= utc
               block.call(channel, message)
               hm.unsubscribe('timer/tick', id)

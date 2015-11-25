@@ -26,6 +26,14 @@ module HM
       require_helpers
     end
 
+    def component_config(component_name)
+      @config.fetch('components', {}).fetch(component_name, {})
+    end
+
+    def component_config?(component_name)
+      component_config(component_name).any?
+    end
+
     def setup_components
       Dir.glob(File.join(root, 'components', '**', '*.rb')).each do |filename|
         require filename
@@ -46,20 +54,24 @@ module HM
 
         @connection.subscribe('#')
         @connection.receive_callback do |message|
-          channel = message.topic
-          payload = message.payload
-
-          @subscriber.matching_subscriptions(channel).each do |subscription|
-            subscription.block.call(channel, payload)
-          end
+          process_message(message)
         end
         setup_components
         @connection.publish('core/start', nil)
       end
     end
 
-    def publish(channel, message)
-      @connection.publish(channel, message)
+    def process_message(message)
+      channel = message.topic
+      payload = JSON.parse(message.payload)
+
+      @subscriber.matching_subscriptions(channel).each do |subscription|
+        subscription.block.call(channel, payload)
+      end
+    end
+
+    def publish(channel, message={})
+      @connection.publish(channel, JSON.generate(message))
     end
 
     def subscribe(channel, id, &block)
