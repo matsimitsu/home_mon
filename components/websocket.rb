@@ -7,8 +7,8 @@ module Components
     end
 
     def start_websocket
-      subscribe('#', id) do |channel, message|
-        WebSocket::EventMachine::Server.start(:host => "0.0.0.0", :port => 8081) do |ws|
+      WebSocket::EventMachine::Server.start(:host => "0.0.0.0", :port => 8081) do |ws|
+        subscribe('#', id) do |channel, message|
           ws.send(JSON.generate({:channel => channel, :message => message}))
         end
       end

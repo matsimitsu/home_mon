@@ -11,6 +11,7 @@ require 'active_support/callbacks'
 require 'json'
 require 'rest_client'
 require 'websocket-eventmachine-server'
+require 'erb'
 
 module HM
   class Core
@@ -22,9 +23,13 @@ module HM
       @root          = root
       @subscriber    = Subscriber.new
       @logger        = Logger.new(STDOUT)
-      @config        = YAML.load_file(File.join(root, 'config', 'config.yml'))
+      @config        = load_config
       @components    = []
       @connection    = nil
+    end
+
+    def load_config
+      YAML::load(ERB.new(IO.read(File.join(root, 'config', 'config.yml'))).result)
     end
 
     # Convenience method that returns the component config

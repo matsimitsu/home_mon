@@ -15,6 +15,7 @@ module Components
     end
 
     def switch_on(params={})
+      puts params
       state['members'].each do |member|
         publish("components/#{member}/on", params)
       end

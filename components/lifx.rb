@@ -21,16 +21,19 @@ module Components
 
     def switch_on(given_params)
       params = {
-        :power      => 'on',
-        :duration   => given_params[:duration] || 5,
-        :brightness => (given_params[:brightness] || 50).to_f / 100
+        'power'      => 'on',
+        'duration'   => given_params['duration'] || 5,
+        'brightness' => (given_params['brightness'] || 50).to_f / 100
       }
       switch(params)
       change_state(params)
     end
 
-    def switch_off
-      params = {:power  => 'off'}
+    def switch_off(given_params)
+      params = {
+        'power'    => 'off',
+        'duration' => given_params['duration'] || 5,
+      }
       switch(params)
       change_state(params)
     end
