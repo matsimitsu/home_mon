@@ -66,11 +66,11 @@ def self.update
 end
 ```
 ## Initializer
-The `Components::Base` class handles the initialisation, you can add your own by calling the `after_initialize` callback.
+The `Core::Component` class handles the initialisation, you can add your own by calling the `after_initialize` callback.
 
 ``` ruby
 module Components
-  class Group < Components::Base
+  class Group < Core::Component
     set_callback :initialize, :after, :listen_for_changes
 
     def listen_for_changes
@@ -148,7 +148,7 @@ An example of a component:
 
 ``` ruby
 module Components
-  class Logger < Components::Base
+  class Logger < Core::Component
     set_callback :initialize, :after, :start_monitor
 
     def self.setup(hm)

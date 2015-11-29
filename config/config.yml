@@ -47,14 +47,14 @@ components:
 
   scene:
     sunset:
-      members:
+      actions:
         -
           component: 'lifx/living/on'
           params:
             brightness: 80
             duration: 60
     bed:
-      members:
+      actions:
         -
           component: 'group/living/off'
           params:
@@ -62,14 +62,43 @@ components:
         -
           component: 'group/bedroom/on'
 
-automate:
-  sunset:
-    trigger:
-      type: state
-      component: sun
-      field: next_sunset
-      offset:
-        hours: -1
-    actions:
-      -
-        component: 'scene/sunset/trigger'
+    early_night:
+      actions:
+        -
+          component: 'lifx/living/update'
+          params:
+            brightness: 20
+            duration: 60
+            color: 'kelvin:2500'
+
+    late_night:
+      actions:
+        -
+          component: 'lifx/living/update'
+          params:
+            brightness: 10
+            duration: 60
+            color: 'orange'
+
+  automate:
+    early_night:
+      triggers:
+        -
+          type: timer
+          time: '11:31'
+          days: ['all']
+
+      actions:
+        -
+          component: 'scene/early_night/trigger'
+
+    late_night:
+      triggers:
+        -
+          type: timer
+          time: '11:33'
+          days: ['all']
+
+      actions:
+        -
+          component: 'scene/late_night/trigger'

@@ -1,6 +1,6 @@
 require 'sun_times'
 module Components
-  class Sun < Components::Base
+  class Sun < Core::Component
     set_callback :initialize, :after, :update
 
     def self.setup(hm)

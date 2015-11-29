@@ -1,15 +1,15 @@
 require 'helpers/subscriber'
 require 'helpers/state'
 require 'helpers/publisher'
-module Components
-  class Base
+module Core
+  class Component
     extend Forwardable
     include ActiveSupport::Callbacks
     include HM::Helpers::State
     include HM::Helpers::Subscriber
     include HM::Helpers::Publisher
 
-    attr_reader :hm, :logger, :name, :config, :state
+    attr_reader :name, :state, :hm
 
     define_callbacks :initialize
 

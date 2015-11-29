@@ -1,5 +1,5 @@
 module Components
-  class Switch < Components::Base
+  class Switch < Core::Component
     set_callback :initialize, :after, :listen_for_changes
 
     def listen_for_changes

@@ -1,10 +1,10 @@
 require 'spec_helper'
 require 'components/base'
 
-describe Components::Base do
+describe Core::Component do
   let(:hm)    { double(:hm, :components => [], :publish => true) }
   let(:state) { {'foo' => 'bar'} }
-  let(:base)  { Components::Base.new(hm, state) }
+  let(:base)  { Core::Component.new(hm, state) }
 
   # Make SecureRandom a little less random
   before { allow(SecureRandom).to receive(:hex).and_return('abc123') }

@@ -42,11 +42,16 @@ module HM
       component_config(component_name).any?
     end
 
-    # Globs components from directory, requires them
-    # and calls 'setup' on the class
+    # Globs components from directory and requires them
+    def require_components
+      Dir.glob(File.join(root, 'components', '**', '*.rb')).each do |filename|
+        load filename
+      end
+    end
+
+    # Globs components from directory and calls 'setup' on the class
     def setup_components
       Dir.glob(File.join(root, 'components', '**', '*.rb')).each do |filename|
-        require filename
         klass = "Components::#{File.basename(filename, '.rb').classify}".constantize
         klass.setup(self)
       end
@@ -71,6 +76,7 @@ module HM
 
     # Called from the eventmachine loop, here so we can test it :)
     def run
+      require_components
       @connection = EventMachine::MQTT::ClientConnection.connect('localhost')
 
       # Subscribe to the 'all' channel and process each incoming message
@@ -97,7 +103,8 @@ module HM
 
     # Encodes the message and publishes it to the given channel
     def publish(channel, message={})
-      connection.publish(channel, JSON.generate(message))
+      logger.debug "Publishing #{message.inspect} to #{channel}"
+      connection.publish(channel, JSON.generate(message || {}))
     end
 
     # Adds subscriber by id for the given channel
@@ -117,3 +124,4 @@ end
 
 require 'core/subscriber'
 require 'core/subscription'
+require 'core/component'

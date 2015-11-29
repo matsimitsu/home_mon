@@ -1,5 +1,5 @@
 module Components
-  class Timer < Components::Base
+  class Timer < Core::Component
 
     set_callback :initialize, :after, :start_timer
 
@@ -17,7 +17,7 @@ module Components
           @last_run_minute = now.min
           publish(
             'timer/tick',
-            {:time => now.change(:sec => 0, :usec => 0).iso8601}
+            {'time' => now.change(:sec => 0, :usec => 0).iso8601}
           )
         end
       end

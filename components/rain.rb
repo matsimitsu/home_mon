@@ -1,5 +1,5 @@
 module Components
-  class Rain < Components::Base
+  class Rain < Core::Component
     set_callback :initialize, :after, :update
 
     def self.setup(hm)

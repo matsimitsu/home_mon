@@ -12,12 +12,12 @@ module Components
       state['id']
     end
 
-    def switch_on(_, params)
+    def switch_on
       system "sudo 'blokker' #{code} on"
       self.state = 'on'
     end
 
-    def switch_off(_, params)
+    def switch_off
       system "sudo 'blokker' #{code} off"
       self.state = 'off'
     end

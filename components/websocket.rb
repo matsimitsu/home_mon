@@ -1,5 +1,5 @@
 module Components
-  class Websocket < Components::Base
+  class Websocket < Core::Component
     set_callback :initialize, :after, :start_websocket
 
     def self.setup(hm)

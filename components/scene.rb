@@ -1,5 +1,5 @@
 module Components
-  class Scene < Components::Base
+  class Scene < Core::Component
     set_callback :initialize, :after, :listen_for_changes
 
     def self.setup(hm)
@@ -14,10 +14,10 @@ module Components
       state['id']
     end
 
-    def trigger(params={})
-      state['members'].each do |member|
-        trigger_params = params.merge(member['params'] || {})
-        publish("components/#{member['component']}", trigger_params)
+    def trigger(params)
+      state['actions'].each do |action|
+        trigger_params = params.merge(action['params'] || {})
+        publish("components/#{action['component']}", trigger_params)
       end
       publish('scenes/triggered', {'name' => name, 'id' => id})
     end

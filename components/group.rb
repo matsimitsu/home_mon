@@ -1,5 +1,5 @@
 module Components
-  class Group < Components::Base
+  class Group < Core::Component
     set_callback :initialize, :after, :listen_for_changes
 
     def self.setup(hm)
@@ -14,15 +14,14 @@ module Components
       state['id']
     end
 
-    def switch_on(params={})
-      puts params
+    def switch_on(params)
       state['members'].each do |member|
         publish("components/#{member}/on", params)
       end
       change_state :power => 'on'
     end
 
-    def switch_off(params={})
+    def switch_off(params)
       state['members'].each do |member|
         publish("components/#{member}/off", params)
       end
