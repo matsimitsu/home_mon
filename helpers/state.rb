@@ -12,10 +12,8 @@ module HM
 
         state.merge!(new_state)
 
-        changed = old_state == state
-
-        if changed || force
-          publish('event/state_changed', expose_state.merge('id' => id))
+        if (old_state == state) || force
+          publish('event/state_changed', expose_state.merge('id' => id, 'component' => name))
         end
 
         state

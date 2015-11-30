@@ -10,13 +10,13 @@ require 'active_support/concern'
 require 'active_support/callbacks'
 require 'json'
 require 'rest_client'
-require 'websocket-eventmachine-server'
+require 'em-websocket'
 require 'erb'
 
 module HM
   class Core
 
-    attr_reader :logger, :root, :connection, :config, :subscriber
+    attr_reader :logger, :root, :connection, :config, :subscriber, :mutex
     attr_accessor :components
 
     def initialize(root)
@@ -57,6 +57,10 @@ module HM
       end
     end
 
+    def components_state
+      components.map { |c| c.expose_state }
+    end
+
     # Runs the main loop
     def start
       EventMachine.epoll
@@ -70,7 +74,6 @@ module HM
     end
 
     def stop
-      logger.info("Terminating")
       EventMachine.stop
     end
 

@@ -7,6 +7,7 @@ module HM
     end
 
     def subscribe(channel, id, &block)
+      return if @subscriptions.find { |s| s.id == id && s.channel == channel }
       @subscriptions << Subscription.new(channel, id, block)
     end
 

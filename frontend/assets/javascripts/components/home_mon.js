@@ -9,9 +9,10 @@ class HomeMon extends React.Component {
 
   componentDidMount() {
     var component = this;
-    var ws = new WebSocket("ws://localhost:8081");
+    var ws = new WebSocket("ws://192.168.0.55:8081");
     ws.onmessage = function (event) {
       var message = JSON.parse(event.data);
+      console.log(event.data)
       component.setState({message: message.message})
     }
   }

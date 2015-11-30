@@ -30,6 +30,7 @@ module Automate
         our_days.each do |our_day|
           return true if match_day?(given_time, our_day)
         end
+        return false
       end
 
       # Match our day with given time
@@ -40,10 +41,12 @@ module Automate
 
         # Check for special values, like 'weekday' and 'weekend'
         case given_day
+        when 'all' then
+          true
         when 'weekday' then
-          ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].include?()
+          ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].include?(given_day)
         when 'weekend' then
-          ['Sun', 'Sat'].include?(given_time.strftime('%a'))
+          ['Sun', 'Sat'].include?(given_day)
         else
           our_day == given_day
         end

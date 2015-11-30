@@ -27,3 +27,4 @@ module Automate
   end
 end
 require 'automate/triggers/timer'
+require 'automate/triggers/event'

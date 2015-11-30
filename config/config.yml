@@ -46,13 +46,21 @@ components:
         - 'blokker/nightstand'
 
   scene:
-    sunset:
+    sunset_start:
       actions:
         -
           component: 'lifx/living/on'
           params:
             brightness: 80
             duration: 60
+
+    sunset_end:
+      actions:
+        -
+          component: 'lifx/living/on'
+          params:
+            brightness: 100
+            duration: 10
     bed:
       actions:
         -
@@ -68,7 +76,7 @@ components:
           component: 'lifx/living/update'
           params:
             brightness: 20
-            duration: 60
+            duration: 7200
             color: 'kelvin:2500'
 
     late_night:
@@ -77,15 +85,36 @@ components:
           component: 'lifx/living/update'
           params:
             brightness: 10
-            duration: 60
+            duration: 1800
             color: 'orange'
 
   automate:
+    sunset_start:
+      description: "When sun sets, slowly fade on the lights"
+      triggers:
+        -
+          type: event
+          event: 'sun/sunset_start'
+      actions:
+        -
+          component: 'scene/sunset_start/trigger'
+
+    sunset_end:
+      description: "When sunset ends, switch on the rest of the lights"
+      triggers:
+        -
+          type: event
+          event: 'sun/sunset_end'
+      actions:
+        -
+          component: 'scene/sunset_end/trigger'
+
     early_night:
+      description: "At 22:00 in the eventing, start fading the lights"
       triggers:
         -
           type: timer
-          time: '11:31'
+          time: '22:00'
           days: ['all']
 
       actions:
@@ -93,10 +122,11 @@ components:
           component: 'scene/early_night/trigger'
 
     late_night:
+      description: "At 00:00, fade the lights even more"
       triggers:
         -
           type: timer
-          time: '11:33'
+          time: '00:00'
           days: ['all']
 
       actions:

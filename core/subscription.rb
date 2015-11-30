@@ -16,9 +16,9 @@ module HM
       return true if given_channel == channel
 
       # Test for a wildcard string ('foo/*')
-      if given_channel.end_with?('*')
-        channel_without_wildcard = given_channel.gsub('*', '')
-        return true if channel.start_with?(channel_without_wildcard)
+      if channel.end_with?('*')
+        channel_without_wildcard = channel.gsub('*', '')
+        return true if given_channel.start_with?(channel_without_wildcard)
       end
       return false
     end

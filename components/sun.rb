@@ -22,10 +22,12 @@ module Components
 
     def expose_state
       {
-        :now          => now,
-        :next_sunrise => next_sunrise,
-        :next_sunset  => next_sunset,
-        :next_change  => next_change
+        :now                => now,
+        :next_sunrise_start => next_sunrise_start,
+        :next_sunrise_end   => next_sunrise_end,
+        :next_sunset_start  => next_sunset_start,
+        :next_sunset_end    => next_sunset_end,
+        :next_change        => next_change
       }
     end
 
@@ -38,7 +40,25 @@ module Components
       end
     end
 
-    def next_sunrise
+    def current_change
+      current_time = Time.now.utc.change(:sec => 0, :usec => 0)
+      case current_time
+      when next_sunrise_start.change(:sec => 0, :usec => 0)
+        'sunrise_start'
+      when next_sunrise_end.change(:sec => 0, :usec => 0)
+        'sunrise_end'
+      when next_sunset_start.change(:sec => 0, :usec => 0)
+        'sunset_start'
+      when next_sunset_end.change(:sec => 0, :usec => 0)
+        'sunset_end'
+      end
+    end
+
+    def next_sunrise_start
+      next_sunrise_end.advance(:hours => -1)
+    end
+
+    def next_sunrise_end
       rise = sun_times.rise(Date.today, lat, lng).utc
       if rise > Time.now.utc
         rise
@@ -47,7 +67,11 @@ module Components
       end
     end
 
-    def next_sunset
+    def next_sunset_start
+      next_sunset_end.advance(:hours => -1)
+    end
+
+    def next_sunset_end
       set = sun_times.set(Date.today, lat, lng).utc
        if set > Time.now.utc
          set
@@ -57,13 +81,18 @@ module Components
     end
 
     def next_change
-      [next_sunrise, next_sunset].min
+      [
+        next_sunrise_start,
+        next_sunrise_end,
+        next_sunset_start,
+        next_sunset_end
+      ].min
     end
 
     def update
-      timestamp = next_change.advance(:seconds => 1).utc
+      timestamp    = next_change.advance(:seconds => 1).utc
       change_state(expose_state)
-
+      publish("sun/#{current_change}", expose_state) if current_change
       subscribe_timestamp(timestamp, :update)
     end
   end
