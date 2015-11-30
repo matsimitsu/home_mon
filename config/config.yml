@@ -1,6 +1,10 @@
 lat: 52.0263009
 lng: 5.5544309
 components:
+  websocket:
+    port: 8081
+  webserver:
+    port: 8080
   lifx:
     api_key: <%= ENV['LIFX_API_KEY'] %>
     entities:

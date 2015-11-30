@@ -6,12 +6,14 @@ module Components
     set_callback :initialize, :after, :start_webserver
 
     def self.setup(hm)
-      new(hm)
+      if hm.component_config('webserver')
+        new(hm, hm.component_config('webserver'))
+      end
     end
 
     def start_webserver
       dir = File.join(hm.root, 'public')
-      Thin::Server.start('0.0.0.0', 8080, :signals => false) do
+      Thin::Server.start('0.0.0.0', state['port'], :signals => false) do
         map "/" do
           use Rack::Static, :urls => [""], :root => dir, :index => 'index.html'
           run lambda {|*|}

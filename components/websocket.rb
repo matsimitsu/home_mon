@@ -4,13 +4,15 @@ module Components
     set_callback :initialize, :after, :start_websocket
 
     def self.setup(hm)
-      new(hm)
+      if hm.component_config('websocket')
+        new(hm, hm.component_config('websocket'))
+      end
     end
 
     def start_websocket
       @channel = EM::Channel.new
-      EM::WebSocket.run(:host => "0.0.0.0", :port => 8081) do |ws|
-        logger.debug "Websocket server started on 8081"
+      EM::WebSocket.run(:host => "0.0.0.0", :port => state['port']) do |ws|
+        logger.debug "Websocket server started on #{state['port']}"
         ws.onopen {
          sid = @channel.subscribe { |msg| ws.send msg }
 
