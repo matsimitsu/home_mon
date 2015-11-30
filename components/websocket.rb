@@ -22,7 +22,6 @@ module Components
       subscribe('event/*', id) do |channel, message|
         @channel.push(JSON.generate({:channel => channel, :message => message}))
       end
-
     end
   end
 end
