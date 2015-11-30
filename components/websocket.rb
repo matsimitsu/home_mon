@@ -1,3 +1,4 @@
+require 'em-websocket'
 module Components
   class Websocket < Core::Component
     set_callback :initialize, :after, :start_websocket

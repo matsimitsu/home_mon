@@ -10,7 +10,6 @@ require 'active_support/concern'
 require 'active_support/callbacks'
 require 'json'
 require 'rest_client'
-require 'em-websocket'
 require 'erb'
 
 module HM

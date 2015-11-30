@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'components/base'
+require 'core/component'
 require 'components/group'
 
 describe Components::Group do

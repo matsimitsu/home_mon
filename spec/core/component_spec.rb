@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'components/base'
+require 'core/component'
 
 describe Core::Component do
   let(:hm)    { double(:hm, :components => [], :publish => true) }
