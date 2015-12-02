@@ -11,11 +11,26 @@ require 'active_support/callbacks'
 require 'json'
 require 'rest_client'
 require 'erb'
+require 'mysql2'
+
+class EventMachine::MQTT::ClientConnection
+  def unbind
+    timer.cancel if timer
+    unless state == :disconnecting
+      if $!
+        # Connection is lost because of an application error
+      else
+        raise MQTT::NotConnectedException.new("Connection to server lost")
+      end
+    end
+    @state = :disconnected
+  end
+end
 
 module HM
   class Core
 
-    attr_reader :logger, :root, :connection, :config, :subscriber, :mutex
+    attr_reader :logger, :root, :connection, :config, :subscriber, :mutex, :database
     attr_accessor :components
 
     def initialize(root)
@@ -25,6 +40,12 @@ module HM
       @config        = load_config
       @components    = []
       @connection    = nil
+      @database      =  Mysql2::Client.new(
+        (@config['database'] || {}).merge(
+          :database_timezone    => :utc,
+          :application_timezone => :utc
+        )
+      )
     end
 
     def load_config
@@ -59,8 +80,12 @@ module HM
     # Globs components from directory and calls 'setup' on the class
     def setup_components
       Dir.glob(File.join(root, 'components', '**', '*.rb')).each do |filename|
-        klass = "Components::#{File.basename(filename, '.rb').classify}".constantize
-        klass.setup(self)
+        begin
+          klass = "Components::#{File.basename(filename, '.rb').classify}".constantize
+          klass.setup(self)
+        rescue => e
+          logger.error("Could not load component #{filename}: #{e.inspect}")
+        end
       end
     end
 
@@ -87,20 +112,31 @@ module HM
     # Called from the eventmachine loop, here so we can test it :)
     def run
       require_components
-      @connection = EventMachine::MQTT::ClientConnection.connect(config['mqtt_url'])
-
-      # Subscribe to the 'all' channel and process each incoming message
-      @connection.subscribe('#')
-      @connection.receive_callback do |message|
-        process_message(message)
-      end
-
       # After connection is present, load the components
+      reconnect
+
       # (some depend on connection beeing there)
       setup_components
 
       # Publish a start message, so components can start doing their thing
       @connection.publish('core/start', {})
+    end
+
+    def reconnect
+      @connection = EventMachine::MQTT::ClientConnection.connect(config['mqtt_url'])
+
+      # Subscribe to the 'all' channel and process each incoming message
+      @connection.subscribe('#')
+      @connection.receive_callback do |message|
+        begin
+          process_message(message)
+        rescue => e
+          logger.error("ERROR: #{e.class.name} #{e.message} #{e.backtrace}")
+        end
+      end
+    rescue MQTT::NotConnectedException
+      sleep 5
+      reconnect
     end
 
     # Decodes the given message and calls any subscribers that match the channel

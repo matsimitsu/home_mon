@@ -12,6 +12,7 @@
 /public/assets
 /node_modules
 /frontend/node_modules
+/db
 
 ## Specific to RubyMotion:
 .dat*

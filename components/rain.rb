@@ -17,7 +17,6 @@ module Components
     def lat; hm.config['lat']; end
     def lng; hm.config['lng']; end
 
-
     def update
       response = RestClient.get("http://gps.buienradar.nl/getrr.php?lat=#{lat}&lon=#{lng}")
 
@@ -38,7 +37,7 @@ module Components
     # Returns 'rain' if there's precipitation in the next 30 minutes
     # Returns 'shine' if there isn't
     def rain_or_shine_from_forecast(forecast)
-      forecast[0..6].map{ |i| i['count']}.reduce(:+) > 0 ? 'rain' : 'shine'
+      forecast[0..6].map{ |i| i['mm']}.reduce(:+) > 0.1 ? 'rain' : 'shine'
     end
 
     # Returns an array of timestamps (5 min. interval) and precipitation in mm
@@ -51,11 +50,13 @@ module Components
 
         # Loop trough the result lines and split the time from the precipitation
         response.lines.each_with_index do |line, index|
-          rainfall = line.split('|').first
-          time     = first.advance(:minutes => (5 * index))
+          scale = line.split('|').first.to_i
+          mm = (10**((scale.to_f - 109)/32)).round(1)
+          time  = first.advance(:minutes => (5 * index))
 
+          next if time.utc < Time.now.utc
           # Push into result set
-          arr.push({'ts' => time.utc, 'count' => rainfall.to_i})
+          arr.push({'ts' => time.utc, 'scale' => scale, 'mm' => mm})
         end
       end
     end

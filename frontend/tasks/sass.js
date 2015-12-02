@@ -9,7 +9,7 @@ var config       = require('../config');
 gulp.task('sass', function () {
   return gulp.src(config.sass.src)
     .pipe(sourcemaps.init())
-    .pipe(sass(config.sass.settings))
+    .pipe(sass(config.sass.settings).on('error', sass.logError))
     .pipe(inlineImage())
 
     // Fingerprint images

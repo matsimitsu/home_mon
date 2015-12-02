@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/BobTheBotMaker/em-serialport.git
+  revision: a66fe7ed3a26880e21f31e2396cb79e7c2bfafd5
+  specs:
+    em-serialport (0.0.3)
+      eventmachine
+      serialport
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -28,6 +36,7 @@ GEM
     mime-types (2.6.1)
     minitest (5.8.1)
     mqtt (0.3.1)
+    mysql2 (0.4.2)
     netrc (0.10.3)
     rack (1.6.4)
     rack-rewrite (1.5.1)
@@ -49,6 +58,7 @@ GEM
       rspec-support (~> 3.2.0)
     rspec-support (3.2.2)
     ruby-sun-times (0.1.5)
+    serialport (1.3.1)
     thin (1.6.3)
       daemons (~> 1.0, >= 1.0.9)
       eventmachine (~> 1.0)
@@ -68,8 +78,10 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   em-mqtt
+  em-serialport!
   em-websocket
   foreman
+  mysql2
   rack
   rack-rewrite
   rest-client

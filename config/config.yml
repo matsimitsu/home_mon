@@ -1,9 +1,20 @@
 lat: 52.0263009
 lng: 5.5544309
-mqtt_url: '192.168.0.20'
+mqtt_url: '127.0.0.1'
+database:
+  host: localhost
+  user: root
+  port: 3306
+  database: home_development
 components:
   webserver:
     port: 8085
+
+  train:
+    user: <%= ENV['NS_API_USER'] %>
+    password: <%= ENV['NS_API_PASS'] %>
+    station: 'klp'
+
   lifx:
     api_key: <%= ENV['LIFX_API_KEY'] %>
     entities:
@@ -29,16 +40,15 @@ components:
       name: 'Bedroom All'
       icon: 'i-lightbulb-o'
       code: 'M 16'
-    bedroom_lamp:
-      name: 'Bedroom Lamp'
-      icon: 'i-lightbulb-o'
-      code: 'M 11'
 
   blokker:
     kitchen:
       name: 'Kitchen'
       icon: 'i-lightbulb-o'
       code: '1'
+    christmas_lights:
+      name: 'Christmas lights'
+      code: '2'
 
   group:
     all:
@@ -53,12 +63,29 @@ components:
         - 'kaku/tv'
         - 'kaku/computer'
         - 'blokker/kitchen'
+        - 'blokker/christmas_lights'
         - 'lifx/living'
 
     bedroom:
       name: 'Bedroom'
       members:
         - 'kaku/bedroom_all'
+
+  metric:
+    water:
+      key: 'w'
+      listen: 'metrics/water'
+      formatter: 'water'
+
+    electricity:
+      key: 'e'
+      listen: 'metrics/electricity'
+      formatter: 'electricity'
+
+    gas:
+      key: 'g'
+      listen: 'metrics/gas'
+      formatter: 'gas'
 
   scene:
     sunset_start:
@@ -119,6 +146,7 @@ components:
             color: kelvin:3500
 
     early_night:
+      description: "Early night (22:00)"
       actions:
         -
           component: 'lifx/living/update'
@@ -128,6 +156,7 @@ components:
             color: 'kelvin:2500'
 
     late_night:
+      description: "Late night (00:00)"
       actions:
         -
           component: 'lifx/living/update'
@@ -173,7 +202,7 @@ components:
         -
           type: timer
           time: '22:00'
-          days: ['all']
+          days: ['All']
 
       actions:
         -
@@ -185,7 +214,7 @@ components:
         -
           type: timer
           time: '00:00'
-          days: ['all']
+          days: ['All']
 
       actions:
         -

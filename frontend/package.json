@@ -3,10 +3,14 @@
   "description": "HomeMon frontend",
   "version": "1.0.0",
   "dependencies": {
+    "alt": "^0.17.9",
     "babel-preset-es2015": "^6.1.18",
     "babel-preset-react": "^6.1.18",
     "gulp": "^3.9.0",
-    "superagent": "^1.4.0"
+    "moment": "^2.10.6",
+    "react-sidebar": "^2.0.0",
+    "superagent": "^1.4.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.1.18",

@@ -1,5 +1,5 @@
-import React from 'react';
-import request from 'superagent'
+import React        from 'react';
+import EventActions from '../actions/events'
 
 class Scene extends React.Component {
 
@@ -11,9 +11,11 @@ class Scene extends React.Component {
 
   render() {
     return (
-      <div className="scene">
-        <span>{this.props.description}</span>
-        <a href="" onClick={this._handleClick}>Trigger</a>
+      <div className="scene sidebar-row">
+        <span className="text">{this.props.description}</span>
+        <div className="mod-button-group">
+          <a href="" onClick={this._handleClick}>Trigger</a>
+        </div>
       </div>
     );
   }
@@ -26,11 +28,7 @@ class Scene extends React.Component {
       action: `components/scene/${this.props.id}/trigger`,
       params: {}
     }
-    request
-      .post('http://192.168.0.55:8080/api/events/trigger')
-      .set('Content-Type', 'application/json')
-      .send(JSON.stringify(body))
-      .end(function(err, res){})
+    EventActions.triggerEvent(body)
   }
 }
 

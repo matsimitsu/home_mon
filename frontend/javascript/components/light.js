@@ -1,5 +1,5 @@
-import React from 'react';
-import request from 'superagent'
+import React        from 'react';
+import EventActions from '../actions/events'
 
 class Light extends React.Component {
 
@@ -12,10 +12,12 @@ class Light extends React.Component {
 
   render() {
     return (
-      <div className="light">
-        <span>{this.props.description}</span>
-        <a href="" onClick={this._handleClickOn}>On</a>
-        <a href="" onClick={this._handleClickOff}>Off</a>
+      <div className="light sidebar-row">
+        <span className="text">{this.props.description}</span>
+        <div className="mod-button-group">
+          <a href="" onClick={this._handleClickOn}>On</a>
+          <a href="" onClick={this._handleClickOff}>Off</a>
+        </div>
       </div>
     );
   }
@@ -39,11 +41,7 @@ class Light extends React.Component {
       action: `components/${this.props.component}/${this.props.id}/${state}`,
       params: {}
     }
-    request
-      .post('http://192.168.0.55:8080/api/events/trigger')
-      .set('Content-Type', 'application/json')
-      .send(JSON.stringify(body))
-      .end(function(err, res){})
+    EventActions.triggerEvent(body)
   }
 }
 

@@ -4,12 +4,19 @@ $font-size: 14px
 $font-family: Helvetica, Arial, sans-serif
 $alt-font: "myriad-pro", Helvetica, sans-serif
 
-$font-color: #b6b6b6
-$font-heading: #cbe876
-$font-subheading: #00ac82
+$font-color: #6f7c87
+$font-heading: #aab7b0
+$font-subheading: #3a556b
+
+$background-color: #f6f9fb
+$background-color-sidebar: #fff
+$background-color-component: #fff
+$border-color: #f3f4f7
+
+$header-height: 40px
 
 *
-  box-sizing(border-box)
+  box-sizing: border-box
 
 html
   overflow-y: scroll
@@ -24,6 +31,8 @@ body
   color: $font-color
   -webkit-text-size-adjust: 100%
   padding: 20px
+  background-color: $background-color
+
 a
   color: $font-color
   text-decoration: none
@@ -33,5 +42,21 @@ h3
   font-family: $alt-font
   color: $font-heading
 
+.main-content
+  margin-top: $header-height
+  padding: 0 10px
+
+@import "_modules/button_group"
+@import "_modules/graph"
+
+@import "_components/header"
+@import "_components/sidebar"
+
+@import "_components/base"
+@import "_components/dashboard"
+
 @import "_components/scenes"
 @import "_components/lights"
+@import "_components/rain"
+@import "_components/train"
+@import "_components/metric"

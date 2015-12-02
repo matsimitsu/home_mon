@@ -41,9 +41,9 @@ module Automate
 
         # Check for special values, like 'weekday' and 'weekend'
         case given_day
-        when 'all' then
+        when 'All' then
           true
-        when 'weekday' then
+        when 'Weekday' then
           ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].include?(given_day)
         when 'weekend' then
           ['Sun', 'Sat'].include?(given_day)
