@@ -36,6 +36,11 @@ module HM
       @config.fetch('components', {}).fetch(component_name, {})
     end
 
+    # Convenience method to return visible components
+    def visible_components
+      components.select { |c| c.state['visible'] != false }
+    end
+
     # Convenience method that checks if the component has a config
     def component_config?(component_name)
       component_config(component_name).any?
@@ -43,6 +48,9 @@ module HM
 
     # Globs components from directory and requires them
     def require_components
+      Dir.glob(File.join(root, 'components', '*.rb')).each do |filename|
+        load filename
+      end
       Dir.glob(File.join(root, 'components', '**', '*.rb')).each do |filename|
         load filename
       end
@@ -79,7 +87,7 @@ module HM
     # Called from the eventmachine loop, here so we can test it :)
     def run
       require_components
-      @connection = EventMachine::MQTT::ClientConnection.connect('localhost')
+      @connection = EventMachine::MQTT::ClientConnection.connect(config['mqtt_url'])
 
       # Subscribe to the 'all' channel and process each incoming message
       @connection.subscribe('#')

@@ -6,7 +6,7 @@ module Components
     def self.setup(hm)
       if hm.component_config('automate')
         hm.component_config('automate').each do |id, att|
-          new(hm, att.merge('id' => id))
+          new(hm, att.merge('id' => id, 'visible' => false))
         end
       end
     end

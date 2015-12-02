@@ -12,14 +12,18 @@ module Components
       state['id']
     end
 
+    def code
+      state['code']
+    end
+
     def switch_on
       system "sudo 'blokker' #{code} on"
-      self.state = 'on'
+      change_state({:power => 'on'})
     end
 
     def switch_off
       system "sudo 'blokker' #{code} off"
-      self.state = 'off'
+      change_state({:power => 'off'})
     end
   end
 end

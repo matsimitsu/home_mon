@@ -12,13 +12,17 @@ module Components
       state['id']
     end
 
+    def code
+      state['code']
+    end
+
     def switch_on
-      #system "sudo 'kaku' #{code} on"
+      system "sudo 'kaku' #{code} on"
       change_state({:power => 'on'})
     end
 
     def switch_off
-      #system "sudo 'kaku' #{code} off"
+      system "sudo 'kaku' #{code} off"
       change_state({:power => 'off'})
     end
 

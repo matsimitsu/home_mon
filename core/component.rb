@@ -26,8 +26,12 @@ module Core
       publish('event/device_added', {'component' => name, 'id' => id})
     end
 
-    def name
+    def component_name
       self.class.name.split('::').last.downcase
+    end
+
+    def name
+      component_name
     end
 
     def id

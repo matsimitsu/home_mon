@@ -1,43 +1,42 @@
-var gulp        = require('gulp');
-var plugins     = require('gulp-load-plugins' )();
-var sourcemaps  = require('gulp-sourcemaps');
-var browserify  = require('browserify');
-var babelify    = require('babelify');
-var concat      = require('gulp-concat');
-var browserSync = require('browser-sync').create();
-var source      = require('vinyl-source-stream');
-var buffer      = require('vinyl-buffer');
+var gulp         = require('gulp');
+var watch        = require('gulp-watch');
+var gulpSequence = require('gulp-sequence');
+var env          = require('gulp-env');
+var requireDir   = require('require-dir');
+var config       = require('./config');
 
-gulp.task('default', ['serve']);
+requireDir('./tasks', { recurse: true });
 
-gulp.task('sass', function() {
-  gulp.src('assets/stylesheets/*.sass')
-    .pipe(plugins.sourcemaps.init())
-    .pipe(plugins.autoprefixer({ browsers: ['last 2 versions'], cascade: false }))
-    .pipe(plugins.sass({ indentedSyntax: true, errLogToConsole: true, outputStyle: 'compressed' }))
-    .pipe(plugins.inlineImage())
-    .pipe(plugins.sourcemaps.write())
-    .pipe(gulp.dest('../public/assets'))
-    .pipe(browserSync.stream());
-});
+// Development
+gulp.task('watch', function(cb) {
+  gulpSequence('clean', 'html', 'images', 'sass', 'javascript', cb);
 
-gulp.task('js', function () {
-  browserify({entries: 'assets/javascripts/application.js', debug: true})
-  .transform(babelify)
-  .bundle()
-  .pipe(source('application.js'))
-  .pipe(buffer())
-  .pipe(sourcemaps.init({ loadMaps: true }))
-  .pipe(sourcemaps.write('.'))
-  .pipe(gulp.dest('../public/assets'));
-});
-
-gulp.task('serve', ['sass', 'js'], function() {
-  browserSync.init({
-    server: "../public"
+  watch(config.html.src+'/*', function(cb) {
+    gulp.start('html');
   });
 
-   gulp.watch("assets/stylesheets/*.sass", ['sass']);
-   gulp.watch("assets/javascripts/*.js", "assets/javascripts/**/*.js" ['js']).on('change', browserSync.reload);
-   gulp.watch("../public/*.html").on('change', browserSync.reload);
+  watch(config.images.src+'/**/*', function(cb) {
+    gulp.start('images');
+    gulp.start('sass');
+  });
+
+  watch(config.sass.src, function(cb) { gulp.start('sass'); });
+  watch(config.javascript.src+'/**/*', function(cb) { gulp.start('javascript'); });
 });
+
+// Production build
+gulp.task('set-env', function () {
+  env({
+    vars: {
+      NODE_ENV: 'production'
+    }
+  })
+});
+
+gulp.task('build', function(cb) {
+  var tasks = ['set-env', 'clean', 'fonts', 'images', 'sass', 'javascript'];
+  tasks.push(cb);
+  gulpSequence.apply(this, tasks);
+});
+
+gulp.task('default', ['watch', 'server']);

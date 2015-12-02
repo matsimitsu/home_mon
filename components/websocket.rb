@@ -4,7 +4,7 @@ module Components
     set_callback :initialize, :after, :start_websocket
 
     def self.setup(hm)
-      if hm.component_config('websocket')
+      if hm.component_config('websocket').present?
         new(hm, hm.component_config('websocket'))
       end
     end
@@ -21,7 +21,6 @@ module Components
          }
        }
       end
-
       subscribe('event/*', id) do |channel, message|
         @channel.push(JSON.generate({:channel => channel, :message => message}))
       end

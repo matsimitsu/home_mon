@@ -3,7 +3,7 @@ module HM
     module State
 
       def expose_state
-        state
+        state.merge('component' => component_name)
       end
 
       def change_state(new_state={})
