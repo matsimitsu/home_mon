@@ -11,18 +11,22 @@ const char* topic = "components/buttonboxwhite/";
 
 // Button settings
 const int leftButton = 5;
-bool leftButtonState = true;
-bool leftButtonCurrent = true;
+bool leftButtonState = false;
+bool leftButtonCurrent = false;
 
-const int middleButton = 4;
-bool middleButtonState = true;
-bool middleButtonCurrent = true;
+const int middleButton = 10;
+bool middleButtonState = false;
+bool middleButtonCurrent = false;
 
-const int rightButton = 2;
-bool rightButtonState = true;
-bool rightButtonCurrent = true;
+const int rightButton = 0;
+bool rightButtonState = false;
+bool rightButtonCurrent = false;
 
 const bool pressed = false;
+
+// Temperature
+unsigned long previousMillis = 0;  // will store last time temp was read
+const long interval = 30000;      // interval at which to read sensor
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -56,7 +60,7 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect("ESP8266Client")) {
+    if (client.connect("ButtonBoxWhite")) {
       Serial.println("connected");
       digitalWrite(BUILTIN_LED, LOW);
     } else {
@@ -93,7 +97,8 @@ void loop() {
   leftButtonState = digitalRead(leftButton);
   if(leftButtonState != leftButtonCurrent) {
     if(leftButtonState == pressed) {
-      char msg[1];
+      char msg[2];
+      sprintf(msg, "{}");
       char outputTopic[80];
       sprintf(outputTopic,"%sleftButton",topic);
       Serial.println(outputTopic);
@@ -105,7 +110,8 @@ void loop() {
   middleButtonState = digitalRead(middleButton);
   if(middleButtonState != middleButtonCurrent) {
     if(middleButtonState == pressed) {
-      char msg[1];
+      char msg[2];
+      sprintf(msg, "{}");
       char outputTopic[80];
       sprintf(outputTopic,"%smiddleButton",topic);
       Serial.println(outputTopic);
@@ -117,13 +123,37 @@ void loop() {
   rightButtonState = digitalRead(rightButton);
   if(rightButtonState != rightButtonCurrent) {
     if(rightButtonState == pressed) {
-      char msg[1];
+      char msg[2];
+      sprintf(msg, "{}");
       char outputTopic[80];
       sprintf(outputTopic,"%srightButton",topic);
       Serial.println(outputTopic);
       client.publish(outputTopic, msg);
     }
     rightButtonCurrent = rightButtonState;
+  }
+
+  unsigned long currentMillis = millis();
+
+  // Check if <interval> seconds have passed, send the temperature
+  if((currentMillis - previousMillis) >= interval) {
+    // save the last time you read the sensor 
+    previousMillis = currentMillis;   
+
+
+    int reading = analogRead(A0);  
+    float voltage = reading * 3.0;
+    voltage /= 1024.0; 
+    float temperature = (voltage - 0.5) * 100 ;
+    Serial.print(temperature); Serial.println(" degrees C");
+    String temp = String(temperature, DEC);
+    char tempBuf[20];
+    dtostrf(temperature, 0, 1, tempBuf);
+    char msg[80];
+    sprintf(msg, "{\"value\":%s}", tempBuf);
+    char outputTopic[80];
+    sprintf(outputTopic,"%stemperature",topic);
+    client.publish(outputTopic, msg);
   }
   
 }

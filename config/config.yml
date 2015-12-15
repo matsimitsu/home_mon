@@ -164,16 +164,37 @@ components:
             brightness: 10
             duration: 1800
             color: 'orange'
+        -
+          component: 'blokker/kitchen/off'
+        -
+          component: 'blokker/christmas_lights/off'
     tv:
       actions:
         -
-          components: 'kaku/tv/on'
+          component: 'kaku/tv/on'
         -
           component: 'lifx/living/on'
           params:
             brightness: 40
             duration: 10
             color: 'kelvin:2800'
+
+  virtual:
+    white_box_left:
+      listen: 'components/buttonboxwhite/leftButton'
+      actions:
+        -
+          component: 'scene/tv/trigger'
+    white_box_middle:
+      listen: 'componetns/buttonboxwhite/middleButton'
+      actions:
+        -
+          component: 'scene/bed/trigger'
+    white_box_right:
+      listen: 'components/buttonboxwhite/rightButton'
+      actions:
+        -
+          component: 'scene/sleep/trigger'
 
   automate:
     sunset_start:

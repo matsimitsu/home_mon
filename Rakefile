@@ -8,5 +8,5 @@ task :deploy do
     tar xf deploy.tar.gz -C ~/app/homemon/
     rm -rf deploy.tar.gz
     sudo service web restart
-  ENDSSH`
+  `
 end
