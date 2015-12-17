@@ -36,20 +36,24 @@ module Components
       results = statement.execute(key, 24.hours.ago.utc.beginning_of_hour)
 
       (0..24).to_a.reverse.map do |hour|
-        ts    = hour.hours.ago.beginning_of_hour
-        value = results.find { |r| r['created_at'].utc == ts.utc}.try(:[], 'value') || 0
-        {'ts'=> ts.utc,'value' => value}
+        ts     = hour.hours.ago.beginning_of_hour
+        record = results.find { |r| r['created_at'].utc == ts.utc}
+        value  = record.try(:[], 'value') || 0
+        count  = record.try(:[], 'count') || 0
+
+        {'ts'=> ts.utc,'value' => value, 'count' => count}
       end
     end
 
-    def store_metric(value)
+    def store_metric(value, count=1)
       time = Time.now.utc.beginning_of_hour
       statement = database.prepare <<-SQL
-        INSERT INTO metrics (`created_at`,`key`,`value`)
-        VALUES (?,?,?)
-        ON DUPLICATE KEY UPDATE `value` = `value` + ?
+        INSERT INTO metrics (`created_at`,`key`,`value`, `count`)
+        VALUES (?,?,?,?)
+        ON DUPLICATE KEY
+        UPDATE `value` = `value` + ?, `count` = `count` + ?
       SQL
-      statement.execute(time, key, value, value)
+      statement.execute(time, key, value, count, value, count)
     end
 
     def process_metric(payload)

@@ -9,4 +9,5 @@ task :deploy do
     rm -rf deploy.tar.gz
     sudo service web restart
   `
+  `rm -rf deploy.tar.gz`
 end

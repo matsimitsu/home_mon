@@ -26,7 +26,7 @@ module Automate
       # Match each given days, if any
       def match_days?(given_time)
         our_days = [*attributes['days']]
-        return true if !our_days
+        return true if our_days.empty?
         our_days.each do |our_day|
           return true if match_day?(given_time, our_day)
         end

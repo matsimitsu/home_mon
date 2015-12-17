@@ -105,7 +105,7 @@ components:
         -
           component: 'lifx/living/on'
           params:
-            brightness: 100
+            brightness: 90
             duration: 10
     bed:
       description: "Bed"
@@ -156,7 +156,7 @@ components:
             color: 'kelvin:2500'
 
     late_night:
-      description: "Late night (00:00)"
+      description: "Late night (23:00)"
       actions:
         -
           component: 'lifx/living/update'
@@ -168,6 +168,8 @@ components:
           component: 'blokker/kitchen/off'
         -
           component: 'blokker/christmas_lights/off'
+        -
+          component: 'kaku/tv/off'
     tv:
       actions:
         -
@@ -186,7 +188,7 @@ components:
         -
           component: 'scene/tv/trigger'
     white_box_middle:
-      listen: 'componetns/buttonboxwhite/middleButton'
+      listen: 'components/buttonboxwhite/middleButton'
       actions:
         -
           component: 'scene/bed/trigger'
@@ -223,19 +225,17 @@ components:
         -
           type: timer
           time: '22:00'
-          days: ['All']
 
       actions:
         -
           component: 'scene/early_night/trigger'
 
     late_night:
-      description: "At 00:00, fade the lights even more"
+      description: "At 23:00, fade the lights even more"
       triggers:
         -
           type: timer
-          time: '00:00'
-          days: ['All']
+          time: '23:00'
 
       actions:
         -
