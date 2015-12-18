@@ -60,7 +60,7 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect("ButtonBoxWhite")) {
+    if (client.connect("ButtonBoxBlack")) {
       Serial.println("connected");
       digitalWrite(BUILTIN_LED, LOW);
     } else {

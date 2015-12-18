@@ -7,6 +7,7 @@ task :deploy do
   `ssh pi@pi <<ENDSSH
     tar xf deploy.tar.gz -C ~/app/homemon/
     rm -rf deploy.tar.gz
+    cd ~/app/homemon && bundle install
     sudo service web restart
   `
   `rm -rf deploy.tar.gz`

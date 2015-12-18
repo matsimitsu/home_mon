@@ -1,7 +1,7 @@
 import alt              from '../alt'
 import ComponentActions from '../actions/components'
 
-class TrainStore {
+class PresenceStore {
   constructor() {
     this.bindListeners({
       onLoadComponents:     ComponentActions.LOAD_COMPONENTS,
@@ -10,9 +10,9 @@ class TrainStore {
     })
 
     // State
-    this.loading    = true;
-    this.error      = null;
-    this.departures = [];
+    this.loading = true;
+    this.error   = null;
+    this.devices = [];
   }
 
   onLoadComponents() {
@@ -20,9 +20,9 @@ class TrainStore {
   }
 
   onReceivedComponents(components) {
-    this.loading    = false;
-    this.error      = null;
-    this.departures = components.train[0].departures || [];
+    this.loading = false;
+    this.error   = null;
+    this.devices = components.presence[0].devices || [];
   }
 
   onError(error) {
@@ -32,9 +32,9 @@ class TrainStore {
 
   getState() {
     return {
-      departures: this.departures,
+      devices: this.devices,
       loading: this.loading
     }
   }
 }
-export default alt.createStore(TrainStore, 'TrainStore');
+export default alt.createStore(PresenceStore, 'PresenceStore');

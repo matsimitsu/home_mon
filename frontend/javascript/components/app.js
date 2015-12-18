@@ -14,7 +14,6 @@ class App extends React.Component {
     super(props);
     this.state = {sidebarOpen: false, sidebarDocked: false}
     this._handleSidebarOpen = this._handleSidebarOpen.bind(this);
-    this._handleMediaQueryChanged = this._handleMediaQueryChanged.bind(this);
     this._toggleOpen = this._toggleOpen.bind(this);
     this._handleReloadClick = this._handleReloadClick.bind(this);
   }
@@ -34,20 +33,6 @@ class App extends React.Component {
     };
   }
 
-  componentWillMount() {
-    let mql = window.matchMedia(`(min-width: 800px)`);
-    mql.addListener(this._handleMediaQueryChanged);
-    this.setState({mql: mql, sidebarDocked: mql.matches});
-  }
-
-  componentWillUnmount() {
-    this.state.mql.removeListener(this._handleMediaQueryChanged);
-  }
-
-  _handleMediaQueryChanged() {
-    this.setState({sidebarDocked: this.state.mql.matches});
-  }
-
   componentDidMount() {
     ComponentActions.loadComponents()
   }
@@ -61,7 +46,6 @@ class App extends React.Component {
     this.setState({sidebarOpen: !this.state.sidebarOpen});
     if (ev) { ev.preventDefault() }
   }
-
 
   render() {
     let scenes = this.props.scenes.map((scene, i) => {

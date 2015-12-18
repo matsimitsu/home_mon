@@ -1,6 +1,6 @@
 import React        from 'react';
 import EventActions from '../actions/events';
-import BarGraph     from '../components/bar_graph'
+import LineGraph     from '../components/line_graph'
 
 class Rain extends React.Component {
 
@@ -24,7 +24,7 @@ class Rain extends React.Component {
         <div className="content">
           <div className="icon"><i className="material-icons">{icon}</i></div>
           <div className="description">
-            <BarGraph max={max} data={graphData} />
+            <LineGraph height={50} className={this.props.className} max={max} data={graphData} gradientFrom={this.props.gradientFrom} gradientTo={this.props.gradientTo} />
           </div>
         </div>
       </div>

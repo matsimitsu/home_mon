@@ -76,16 +76,27 @@ components:
       key: 'w'
       listen: 'metrics/water'
       formatter: 'water'
+      gradient_from: '#2f97f8'
+      gradient_to: '#002cc0'
 
     electricity:
       key: 'e'
       listen: 'metrics/electricity'
       formatter: 'electricity'
+      gradient_from: '#7bdb00'
+      gradient_to: '#00aa22'
 
     gas:
       key: 'g'
       listen: 'metrics/gas'
       formatter: 'gas'
+      gradient_from: '#ff7106'
+      gradient_to: '#c71c13'
+
+  devices:
+    -
+      name: 'Xiaomi Robert'
+      mac: '34:80:b3:d4:d6:81'
 
   scene:
     sunset_start:
@@ -197,6 +208,17 @@ components:
       actions:
         -
           component: 'scene/sleep/trigger'
+
+    white_box_pir_on:
+      listen: 'components/buttonboxwhite/pir/on'
+      actions:
+        -
+          component: 'group/bedroom/off'
+    white_box_pir_off:
+      listen: 'components/buttonboxwhite/pir/off'
+      actions:
+        -
+          component: 'group/bedroom/on'
 
   automate:
     sunset_start:

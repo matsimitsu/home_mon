@@ -1,5 +1,4 @@
 import React        from 'react';
-import EventActions from '../actions/events';
 import moment       from 'moment';
 
 class BarGraph extends React.Component {
@@ -12,7 +11,6 @@ class BarGraph extends React.Component {
   render() {
     let elements = this.props.data.map( (point, i) => {
       let height    = 1;
-      let time      = moment(point.ts, 'YYYY-MM-DD HH:mm:ss Z');
       let className = "";
 
       // If we have a count and max > 0, use it to calculate percentage
